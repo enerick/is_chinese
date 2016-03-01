@@ -1,4 +1,5 @@
 defmodule IsChinese do
+  # from https://github.com/alsotang/is-chinese
   @chinese_range [
     {0x4e00, 0x9fff}, # CJK Unified Ideographs
     {0x3400, 0x4dbf}, # CJK Unified Ideographs Extension A
@@ -14,4 +15,14 @@ defmodule IsChinese do
     {0x2f800, 0x2fa1f}, # https:#en.wikipedia.org/wiki/CJK_Compatibility_Ideographs_Supplement
   ]
 
+  def verify?(str) do
+    String.codepoints(str) |> Enum.all?(fn(p) -> in_range?(p) end)
+  end
+
+  defp in_range?(codepoint) do
+    << int_val :: utf8 >> = codepoint
+    Enum.any? @chinese_range, fn(r) -> 
+      int_val > elem(r,0) && int_val < elem(r, 1)
+    end
+  end
 end
